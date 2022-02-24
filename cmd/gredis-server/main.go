@@ -3,84 +3,36 @@ package main
 import (
 	"log"
 	"strings"
-	"sync"
 
+	"github.com/Xia-Jialin/gredis/pkg/command"
+	"github.com/Xia-Jialin/gredis/pkg/gredis"
+	"github.com/roseduan/rosedb"
 	"github.com/tidwall/redcon"
 )
 
 var addr = ":6379"
 
 func main() {
-	var mu sync.RWMutex
-	var items = make(map[string][]byte)
+	config := rosedb.DefaultConfig()
+	db, err := rosedb.Open(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var ps redcon.PubSub
 	go log.Printf("started server at %s", addr)
-	err := redcon.ListenAndServe(addr,
+	err = redcon.ListenAndServe(addr,
 		func(conn redcon.Conn, cmd redcon.Command) {
-			switch strings.ToLower(string(cmd.Args[0])) {
-			default:
+			if len(cmd.Args) < 1 {
 				conn.WriteError("ERR unknown command '" + string(cmd.Args[0]) + "'")
-			case "ping":
-				conn.WriteString("PONG")
-			case "quit":
-				conn.WriteString("OK")
-				conn.Close()
-			case "set":
-				if len(cmd.Args) != 3 {
-					conn.WriteError("ERR wrong number of arguments for '" + string(cmd.Args[0]) + "' command")
-					return
-				}
-				mu.Lock()
-				items[string(cmd.Args[1])] = cmd.Args[2]
-				mu.Unlock()
-				conn.WriteString("OK")
-			case "get":
-				if len(cmd.Args) != 2 {
-					conn.WriteError("ERR wrong number of arguments for '" + string(cmd.Args[0]) + "' command")
-					return
-				}
-				mu.RLock()
-				val, ok := items[string(cmd.Args[1])]
-				mu.RUnlock()
-				if !ok {
-					conn.WriteNull()
-				} else {
-					conn.WriteBulk(val)
-				}
-			case "del":
-				if len(cmd.Args) != 2 {
-					conn.WriteError("ERR wrong number of arguments for '" + string(cmd.Args[0]) + "' command")
-					return
-				}
-				mu.Lock()
-				_, ok := items[string(cmd.Args[1])]
-				delete(items, string(cmd.Args[1]))
-				mu.Unlock()
-				if !ok {
-					conn.WriteInt(0)
-				} else {
-					conn.WriteInt(1)
-				}
-			case "publish":
-				if len(cmd.Args) != 3 {
-					conn.WriteError("ERR wrong number of arguments for '" + string(cmd.Args[0]) + "' command")
-					return
-				}
-				conn.WriteInt(ps.Publish(string(cmd.Args[1]), string(cmd.Args[2])))
-			case "subscribe", "psubscribe":
-				if len(cmd.Args) < 2 {
-					conn.WriteError("ERR wrong number of arguments for '" + string(cmd.Args[0]) + "' command")
-					return
-				}
-				command := strings.ToLower(string(cmd.Args[0]))
-				for i := 1; i < len(cmd.Args); i++ {
-					if command == "psubscribe" {
-						ps.Psubscribe(conn, string(cmd.Args[i]))
-					} else {
-						ps.Subscribe(conn, string(cmd.Args[i]))
-					}
-				}
+				return
 			}
+			comd, ok := command.CommandTable[strings.ToLower(string(cmd.Args[0]))]
+			if !ok {
+				conn.WriteError("ERR unknown command '" + string(cmd.Args[0]) + "'")
+				return
+			}
+			comd(gredis.Client{Conn: conn, Command: cmd, RoseDB: db, PubSub: &ps})
 		},
 		func(conn redcon.Conn) bool {
 			// Use this function to accept or deny the connection.
