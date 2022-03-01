@@ -88,3 +88,25 @@ func getSet(c gredis.Client) {
 	}
 	c.WriteBulk(val)
 }
+
+func append_str(c gredis.Client) {
+	if len(c.Args) != 3 {
+		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())
+		return
+	}
+
+	err := c.Append(c.Args[1], string(c.Args[2]))
+	if err != nil {
+		c.WriteInt(0)
+		log.Println(err.Error())
+		return
+	}
+	val := make([]byte, 1)
+	err = c.Get(c.Args[1], &val)
+	if err != nil {
+		c.WriteInt(0)
+		log.Println(err)
+		return
+	}
+	c.WriteInt(len(val))
+}
