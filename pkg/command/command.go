@@ -18,6 +18,7 @@ func init() {
 	CommandTable["setnx"] = setnx
 	CommandTable["setex"] = setex
 	CommandTable["get"] = get
+	CommandTable["getset"] = getSet
 
 	// connect
 	CommandTable["quit"] = quit
