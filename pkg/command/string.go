@@ -72,3 +72,19 @@ func get(c gredis.Client) {
 	}
 	c.WriteBulk(val)
 }
+
+func getSet(c gredis.Client) {
+	if len(c.Args) != 3 {
+		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())
+		return
+	}
+
+	val := make([]byte, 1)
+	err := c.GetSet(c.Args[1], c.Args[2], &val)
+	if err != nil {
+		log.Println(err.Error())
+		c.WriteNull()
+		return
+	}
+	c.WriteBulk(val)
+}
