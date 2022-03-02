@@ -13,7 +13,9 @@ func init() {
 	// Key
 	CommandTable["del"] = del
 	CommandTable["ttl"] = ttl
+	CommandTable["pttl"] = pttl
 	CommandTable["exists"] = exists
+	CommandTable["expire"] = expire
 	// sting
 	CommandTable["set"] = set
 	CommandTable["setnx"] = setnx
