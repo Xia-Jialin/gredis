@@ -105,6 +105,31 @@ func ttl(c gredis.Client) {
 	c.WriteInt64(liveTime)
 }
 
+func pttl(c gredis.Client) {
+	if len(c.Args) != 2 {
+		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())
+		return
+	}
+
+	var liveTime int64
+	switch getKeyType(c) {
+	case rosedb.String:
+		liveTime = c.TTL(c.Args[1])
+	case rosedb.List:
+		liveTime = c.LTTL(c.Args[1])
+	case rosedb.Hash:
+		liveTime = c.HTTL(c.Args[1])
+	case rosedb.Set:
+		liveTime = c.STTL(c.Args[1])
+	case rosedb.ZSet:
+		liveTime = c.ZTTL(c.Args[1])
+	default:
+		c.WriteInt64(-2)
+		return
+	}
+	c.WriteInt64(liveTime * 1000)
+}
+
 func getKeyType(c gredis.Client) rosedb.DataType {
 	if c.StrExists(c.Args[1]) {
 		return rosedb.String
