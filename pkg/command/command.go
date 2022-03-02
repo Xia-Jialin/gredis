@@ -27,6 +27,7 @@ func init() {
 
 	//Hash
 	CommandTable["hset"] = hset
+	CommandTable["hget"] = hget
 
 	// connect
 	CommandTable["quit"] = quit
