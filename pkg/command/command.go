@@ -25,6 +25,9 @@ func init() {
 	CommandTable["getset"] = getSet
 	CommandTable["appent"] = append_str
 
+	//Hash
+	CommandTable["hset"] = hset
+
 	// connect
 	CommandTable["quit"] = quit
 	CommandTable["ping"] = ping
