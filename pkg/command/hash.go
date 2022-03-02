@@ -26,3 +26,16 @@ func hset(c gredis.Client) {
 	}
 	c.WriteInt(1)
 }
+
+func hget(c gredis.Client) {
+	if len(c.Args) != 3 {
+		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())
+		return
+	}
+	val := c.HGet(c.Args[1], c.Args[2])
+	if val == nil {
+		c.WriteNull()
+		return
+	}
+	c.WriteBulk(val)
+}
