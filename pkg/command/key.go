@@ -35,6 +35,18 @@ func del(c gredis.Client) {
 	}
 }
 
+func exists(c gredis.Client) {
+	if len(c.Args) != 2 {
+		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())
+		return
+	}
+	if getKeyType(c) > rosedb.ZSet {
+		c.WriteInt(0)
+		return
+	}
+	c.WriteInt(1)
+}
+
 func ttl(c gredis.Client) {
 	if len(c.Args) != 2 {
 		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())
