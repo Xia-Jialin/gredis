@@ -80,6 +80,35 @@ func expire(c gredis.Client) {
 	c.WriteInt(1)
 }
 
+func persist(c gredis.Client) {
+	if len(c.Args) != 2 {
+		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())
+		return
+	}
+
+	var err error
+	key := c.Args[1]
+	switch getKeyType(c) {
+	case rosedb.String:
+		err = c.Persist(key)
+	case rosedb.List:
+		break
+	case rosedb.Hash:
+		break
+	case rosedb.Set:
+		break
+	case rosedb.ZSet:
+		break
+	default:
+		c.WriteInt64(0)
+		return
+	}
+	if err != nil {
+		c.WriteInt(0)
+	}
+	c.WriteInt(1)
+}
+
 func ttl(c gredis.Client) {
 	if len(c.Args) != 2 {
 		c.WriteError(newWrongNumOfArgsError(string(c.Args[0])).Error())

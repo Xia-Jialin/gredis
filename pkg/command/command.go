@@ -16,6 +16,7 @@ func init() {
 	CommandTable["pttl"] = pttl
 	CommandTable["exists"] = exists
 	CommandTable["expire"] = expire
+	CommandTable["persist"] = persist
 	// sting
 	CommandTable["set"] = set
 	CommandTable["setnx"] = setnx
