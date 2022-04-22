@@ -1,0 +1,33 @@
+# github.com/roseduan/mmap-go v1.0.0
+github.com/roseduan/mmap-go
+# github.com/roseduan/rosedb v1.3.0
+## explicit
+github.com/roseduan/rosedb
+github.com/roseduan/rosedb/ds/hash
+github.com/roseduan/rosedb/ds/list
+github.com/roseduan/rosedb/ds/set
+github.com/roseduan/rosedb/ds/zset
+github.com/roseduan/rosedb/index
+github.com/roseduan/rosedb/storage
+github.com/roseduan/rosedb/utils
+# github.com/tidwall/btree v1.1.0
+github.com/tidwall/btree
+github.com/tidwall/btree/internal
+# github.com/tidwall/match v1.1.1
+github.com/tidwall/match
+# github.com/tidwall/redcon v1.4.4
+## explicit
+github.com/tidwall/redcon
+# github.com/vmihailenco/msgpack/v5 v5.3.5
+## explicit
+github.com/vmihailenco/msgpack/v5
+github.com/vmihailenco/msgpack/v5/msgpcode
+# github.com/vmihailenco/tagparser/v2 v2.0.0
+github.com/vmihailenco/tagparser/v2
+github.com/vmihailenco/tagparser/v2/internal
+github.com/vmihailenco/tagparser/v2/internal/parser
+# golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9
+## explicit
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
